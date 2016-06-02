@@ -11,7 +11,6 @@ def get_optimal_value(capacity, items):
 
     # Sort items by value/weight
     items.sort(key=lambda item: item[0]/item[1], reverse=True)
-    print(items)
 
     # figure out how much value can fit in capacity
     i = 0
