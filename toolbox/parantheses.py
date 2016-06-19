@@ -87,11 +87,17 @@ def recreate_expression_with_parentheses(sub_mins, sub_maxs, numbers, ops):
     print "Max result: {0}, can be acheived by expression:\n".format(str(sub_maxs[len(ops)][0]))
 
     '''
+    e.g. sub_mins
     1
-    2 3
-    4 5 6
-    7 8 9 1
-    1 2 3 4 5
+    -7 8
+    -47 48 6
+    -67 -112 -14 20
+
+    e.g. sub_maxs
+    1
+    -7 8
+    -42 48 6
+    113 28 -14 20
 
     Go down horizontal and vertically from position of each matrix,
     find pair that create
@@ -99,8 +105,11 @@ def recreate_expression_with_parentheses(sub_mins, sub_maxs, numbers, ops):
     while (len(ops_reverse_order) < len(ops)):
         value = search_values.pop(0)
 
+        # horizontal position of target in row
         h = value[0]
+        # vertical row of target
         v = value[1]
+        # latest value on search path
         target = value[2]
 
         for i in range(h, len(sub_maxs[v])):
@@ -121,8 +130,10 @@ def recreate_expression_with_parentheses(sub_mins, sub_maxs, numbers, ops):
                 d = sub_mins[i][h] * sub_mins[v][i+1]
 
             if a == target:
+                # top left value on the diagonal, we dont need to keep traversing
                 if h != i:
                     search_values.append([h, i, sub_maxs[i][h]])
+                # on the bottom right of the diagonal, dont keep traversing
                 if (i+1) != v:
                     search_values.append([i+1, v, sub_maxs[v][i+1]])
 
@@ -130,8 +141,10 @@ def recreate_expression_with_parentheses(sub_mins, sub_maxs, numbers, ops):
 
                 break
             if b == target:
+                # on the diagonal, we dont need to keep traversing
                 if h != i:
                     search_values.append([h, i, sub_maxs[i][h]])
+                # on the bottom right of the diagonal, dont keep traversing
                 if (i+1) != v:
                     search_values.append([i+1, v, sub_mins[v][i+1]])
 
@@ -139,8 +152,10 @@ def recreate_expression_with_parentheses(sub_mins, sub_maxs, numbers, ops):
 
                 break
             if c == target:
+                # on the diagonal, we dont need to keep traversing
                 if h != i:
                     search_values.append([h, i, sub_mins[i][h]])
+                # on the bottom right of the diagonal, dont keep traversing
                 if (i+1) != v:
                     search_values.append([i+1, v, sub_maxs[v][i+1]])
 
@@ -148,8 +163,10 @@ def recreate_expression_with_parentheses(sub_mins, sub_maxs, numbers, ops):
 
                 break
             if d == target:
+                # on the diagonal, we dont need to keep traversing
                 if h != i:
                     search_values.append([h, i, sub_mins[i][h]])
+                # on the bottom right of the diagonal, dont keep traversing
                 if (i+1) != v:
                     search_values.append([i+1, v, sub_mins[v][i+1]])
 
@@ -159,35 +176,51 @@ def recreate_expression_with_parentheses(sub_mins, sub_maxs, numbers, ops):
 
     generate_expression_string(ops_reverse_order, ops, numbers)
 
-def generate_expression_string(ops_reverse_order, ops, numbers):
-    pp.pprint(ops_reverse_order)
-    op_expressions = {}
-    first_op = ops_reverse_order.pop(0)
-    op_expressions[first_op] = ops[first_op]
+'''
+ops_reverse_order list of operations in the reverse order of taking place
+    e.g. [2, 0, 1]
+ops from expression
+    e.g. ['*', '+', '-']
+numbers from expression
+    e.g. [2, 14, 16, 12]
 
-    for op in ops_reverse_order:
-        if ((op-1) != first_op and (op-1) in op_expressions):
+This would mean the inputted expression was:
+    e.g. 2 * 14 + 16 - 12
+
+And based on ops_reverse_order,
+    the '-' ops[2] should be last
+    then '*' ops[0] next to last
+    with '+' ops[1] coming first
+
+    e.g (2 * (14+16)) - 12
+'''
+def generate_expression_string(ops_reverse_order, ops, numbers):
+    op_expressions = {}
+    last_op = ops_reverse_order.pop(0)
+    op_expressions[last_op] = ops[last_op]
+
+    for op in reversed(ops_reverse_order):
+        # not last op
+        if ((op-1) != last_op and (op-1) in op_expressions):
             before = op_expressions[op-1]
 
             op_expressions[op-1] = op
 
             # chase down head as if linked list
             while isinstance(before, int):
-                print 'instance before:{0}'.format(str(before))
                 tmp = before
                 before = op_expressions[before]
                 op_expressions[tmp] = op
         else:
             before = numbers[op]
 
-        if ((op+1) != first_op and (op+1) in op_expressions):
+        if ((op+1) != last_op and (op+1) in op_expressions):
             after = op_expressions[op+1]
 
             op_expressions[op+1] = op
 
             # chase down head as if linked list
             while isinstance(after, int):
-                print 'instance after:{0}'.format(str(before))
                 tmp = after
                 after = op_expressions[after]
                 op_expressions[tmp] = op
@@ -197,25 +230,25 @@ def generate_expression_string(ops_reverse_order, ops, numbers):
         op_expressions[op] = '({0}{1}{2})'.format(str(before), ops[op], str(after))
 
     expr = ''
-    if (first_op == 0):
+    if (last_op == 0):
         expr += str(numbers[0])
-    if (first_op-1) in op_expressions:
-        tmp = op_expressions[first_op-1]
+    if (last_op-1) in op_expressions:
+        tmp = op_expressions[last_op-1]
         while isinstance(tmp, int):
             tmp = op_expressions[tmp]
 
         expr += tmp
 
-    expr += str(op_expressions[first_op])
+    expr += str(op_expressions[last_op])
 
-    if (first_op+1) in op_expressions:
-        tmp = op_expressions[first_op+1]
+    if (last_op+1) in op_expressions:
+        tmp = op_expressions[last_op+1]
         while isinstance(tmp, int):
             tmp = op_expressions[tmp]
 
         expr += tmp
-    if (first_op == len(ops_reverse_order)):
-        expr += str(numbers[first_op+1])
+    if (last_op == len(ops_reverse_order)):
+        expr += str(numbers[last_op+1])
 
     print expr
 
