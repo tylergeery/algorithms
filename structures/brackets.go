@@ -13,9 +13,11 @@ type Bracket struct {
     char string
 }
 
-// go through string to find if all brackets are properly closed
+// go through file to find if all brackets are properly closed
 // examples of valid brackets include
-//   "{}", "[]", "()"
+//   "{()}", "[]{lawls}{}", "()"
+// invalid brackets could be
+//  "{{(}}", "}}}", "         {{}"
 func parse(path string) (index int, err error) {
     // construct stack for tracking valid brackets
     var brackets []Bracket
@@ -52,7 +54,6 @@ func parse(path string) (index int, err error) {
 
                 // get first value of stack
                 tmp, brackets = brackets[len(brackets)-1], brackets[:len(brackets)-1]
-                log.Println("TMP: " + tmp.char)
 
                 if (tmp.char == "[" && c == "]" ||
                     tmp.char == "{" && c == "}" ||
