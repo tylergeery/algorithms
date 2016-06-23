@@ -106,5 +106,5 @@ func main() {
     // call recursive function with tree head
     treeHeight := recursiveCount(nodes, nodes[tree.head])
 
-    fmt.Println("Tree height: %d", treeHeight)
+    fmt.Println("Tree height:", treeHeight)
 }
