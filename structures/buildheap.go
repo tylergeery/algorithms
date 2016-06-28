@@ -45,7 +45,6 @@ func main() {
                 heap = append(heap, val)
             }
 
-            fmt.Println(heap)
             if len(heap) > 0 {
                 // start in bottom left, start organizing heap
                 log := math.Log2(float64(len(heap)))
@@ -54,14 +53,10 @@ func main() {
 
 
                 for heapRowIndex >= heapRowStart {
-                    fmt.Println("heapRowIndex: " + strconv.Itoa(heapRowIndex))
-                    fmt.Println("heapRowStart: " + strconv.Itoa(heapRowStart))
                     // check if node is less than parent
                     pos, parentPos := heapRowIndex, int(math.Floor(float64(heapRowIndex-1) / float64(2)))
 
                     for heap[pos] < heap[parentPos] {
-                        fmt.Println("parentPos: " + strconv.Itoa(parentPos))
-                        fmt.Println("pos: " + strconv.Itoa(pos))
                         // swap is neccessary
                         tmp := heap[parentPos]
                         heap[parentPos] = heap[pos]
@@ -75,8 +70,6 @@ func main() {
                         } else {
                             pos, parentPos = 0, 0
                         }
-
-                        fmt.Println(heap)
                     }
 
                     heapRowIndex--
