@@ -8,7 +8,7 @@ import (
   "strings"
 )
 
-// minimum allowable phone number
+// maximum allowable phone number
 const HASH_MAX_SIZE = 9999999
 
 // basic map interface
