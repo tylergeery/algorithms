@@ -43,43 +43,16 @@ func (tree *AVL) insert(value int) *AVL {
     }
 
     if value > comparator.value {
-        avl.parent = &comparator.right
+        avl.parent = comparator
         comparator.right = &avl
     } else {
-        avl.parent = &comparator.left
+        avl.parent = comparator
         comparator.left = &avl
     }
 
     // check if we need to adjust the tree
 
     return tree
-}
-
-func (tree *AVL) printTree() {
-    var oldValues []*AVL
-    oldValues = append(oldValues, tree)
-
-    for len(oldValues) > 0 {
-        iterator := oldValues
-        oldValues = make([]*AVL, 0)
-
-        for _,t := range iterator {
-            fmt.Printf("%d ", t.value)
-
-            if t.left != nil {
-                oldValues = append(oldValues, t.left)
-            }
-
-            if t.right != nil {
-                oldValues = append(oldValues, t.right)
-            }
-        }
-
-        fmt.Println("")
-    }
-
-    fmt.Println("")
-    fmt.Println("")
 }
 
 func (tree *AVL) height() int {
@@ -90,7 +63,7 @@ func (tree *AVL) height() int {
     }
 
     if tree.right != nil {
-        rightHeight = tree.rigth.height()
+        rightHeight = tree.right.height()
     }
 
     if leftHeight > rightHeight {
@@ -100,10 +73,12 @@ func (tree *AVL) height() int {
     }
 }
 
-func (tree *AVL) rotateLeft {
-    // do something
-}
-
-func (tree *AVL) rotateRight {
-    // do something
-}
+// func (tree *AVL) rotateLeft {
+//     fmt.Println("Do something")
+//     return tree.right = nil
+// }
+//
+// func (tree *AVL) rotateRight {
+//     fmt.Println("Do something")
+//     tree.left = nil
+// }
