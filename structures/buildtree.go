@@ -1,11 +1,14 @@
 package main
 
+/**
+ * Run with go run buildtree.go avl.go
+ */
 import (
     "math/rand"
 )
 
 func main() {
-    i := 7
+    i := 25
     avl := new(AVL)
 
     for i > 0 {
@@ -14,7 +17,6 @@ func main() {
 
         if avl.value == 0 {
             avl.value = r
-            avl.height = 0
         } else {
             avl = avl.insert(r)
         }

@@ -7,9 +7,7 @@ import (
 
 type AVL struct {
     value int
-    height int
-    left *AVL
-    right *AVL
+    parent, left, right *AVL
 }
 
 type AVLTree interface {
@@ -19,29 +17,36 @@ type AVLTree interface {
 }
 
 func (tree *AVL) insert(value int) *AVL {
-    avl := AVL{value: value, height: 0}
+    avl := AVL{value: value}
     comparator := tree
 
     fmt.Println("New tree value: " + strconv.Itoa(value))
     // sift down the tree
-    for comparator.right != nil && comparator.left != nil {
-        comparator.height++
+    for comparator.right != nil || comparator.left != nil {
         test := comparator.value
 
         if value <= test {
+            if comparator.left == nil {
+                break;
+            }
+
             comparator = comparator.left
-            fmt.Println("Tree.left")
         }
 
         if value > test {
+            if comparator.right == nil {
+                break;
+            }
+
             comparator = comparator.right
-            fmt.Println("Tree.right")
         }
     }
 
     if value > comparator.value {
+        avl.parent = &comparator.right
         comparator.right = &avl
     } else {
+        avl.parent = &comparator.left
         comparator.left = &avl
     }
 
@@ -72,12 +77,33 @@ func (tree *AVL) printTree() {
 
         fmt.Println("")
     }
+
+    fmt.Println("")
+    fmt.Println("")
 }
 
-// func (tree *AVL) rotateLeft {
-//     // do something
-// }
-//
-// func (tree *AVL) rotateRight {
-//     // do something
-// }
+func (tree *AVL) height() int {
+    leftHeight, rightHeight := 0, 0
+
+    if tree.left != nil {
+        leftHeight = tree.left.height()
+    }
+
+    if tree.right != nil {
+        rightHeight = tree.rigth.height()
+    }
+
+    if leftHeight > rightHeight {
+        return leftHeight
+    } else {
+        return rightHeight
+    }
+}
+
+func (tree *AVL) rotateLeft {
+    // do something
+}
+
+func (tree *AVL) rotateRight {
+    // do something
+}
