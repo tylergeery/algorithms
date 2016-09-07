@@ -11,6 +11,9 @@ type AVL struct {
 }
 
 type AVLTree interface {
+    adjust()
+    height() int
+    heights() (int, int)
     insert(value int) *AVL
     rotateLeft() AVL
     rotateRight() AVL
@@ -51,20 +54,27 @@ func (tree *AVL) insert(value int) *AVL {
     }
 
     // check if we need to adjust the tree
+    tree = tree.adjust()
 
     return tree
 }
 
-func (tree *AVL) height() int {
+func (tree *AVL) heights() (int, int) {
     leftHeight, rightHeight := 0, 0
 
     if tree.left != nil {
-        leftHeight = tree.left.height()
+        leftHeight = 1 + tree.left.height()
     }
 
     if tree.right != nil {
-        rightHeight = tree.right.height()
+        rightHeight = 1 + tree.right.height()
     }
+
+    return leftHeight, rightHeight
+}
+
+func (tree *AVL) height() int {
+    leftHeight, rightHeight := tree.heights()
 
     if leftHeight > rightHeight {
         return leftHeight
@@ -73,12 +83,51 @@ func (tree *AVL) height() int {
     }
 }
 
-// func (tree *AVL) rotateLeft {
-//     fmt.Println("Do something")
-//     return tree.right = nil
-// }
-//
-// func (tree *AVL) rotateRight {
-//     fmt.Println("Do something")
-//     tree.left = nil
-// }
+func (tree *AVL) adjust() *AVL {
+    leftHeight, rightHeight := tree.heights()
+    fmt.Println("Heights:", leftHeight, rightHeight)
+
+    if (leftHeight - rightHeight) > 1 {
+        tree = tree.rotateRight()
+    }
+
+    if (rightHeight - leftHeight) > 1 {
+        tree = tree.rotateLeft()
+    }
+
+    return tree
+}
+
+func (tree *AVL) rotateLeft() *AVL {
+    fmt.Println("Rotating left")
+    leftHeight, rightHeight := tree.right.heights()
+
+    if (leftHeight > rightHeight) {
+        // double shift, go right first
+        tree.right = tree.right.rotateRight()
+    }
+
+    tmp := tree
+    tree = tmp.right
+    tmp.right = tree.left
+    tree.left = tmp
+
+    return tree
+}
+
+func (tree *AVL) rotateRight() *AVL {
+    fmt.Println("Rotating right")
+    leftHeight, rightHeight := tree.left.heights()
+
+    if (rightHeight > leftHeight) {
+        // double shift, go left first
+        tree.left = tree.left.rotateLeft()
+    }
+
+    tmp := tree
+    tree = tmp.left
+    tmp.left = tree.right
+    tree.right = tmp
+
+    return tree
+}
