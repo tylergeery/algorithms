@@ -25,18 +25,38 @@ amanaplanacanalpanama
 xyzyx
 */
 func main() {
-    fmt.Println(solve("abba"))
+    fmt.Println(Solve("abccb"))
 }
 
-func solve(word string) string {
+func Solve(word string) string {
     l := len(word)
     half := (l / 2)
+    suffix := ""
 
     for i := half; i < l; i++ {
-        fmt.Println(string(word[i]))
+        sep := i
+        length := l - sep
+
+        if sep - length < 0 {
+            length--
+        }
+
+        first := word[sep - length:sep]
+        first_overlap := word[sep - length + 1: sep+1]
+        second := reverse(word[l - length:])
+
+        if first == second {
+            suffix = reverse(word[: sep - length])
+            break
+        }
+
+        if first_overlap == second {
+            suffix = reverse(word[: sep - length + 1])
+            break
+        }
     }
 
-    return word
+    return word + suffix
 }
 
 func stoa(word string) (int, []rune) {
